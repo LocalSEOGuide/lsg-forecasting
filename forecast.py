@@ -25,7 +25,8 @@ confirmation_set = 'third_quarter.csv'
 metric = 'clicks'
 # column of metric that will be predicted
 columnname = 'f0_'
-# name of column that includes date/time information (note: index should be zero. if index for date/time is not zero, you may need to make fixes below)
+# name of column that includes date/time information (note: index should be zero. if index for date/time is not zero,
+# you may need to make fixes below)
 columntime = 'date'
 days_in_year = 365
 # days, months or years
@@ -168,7 +169,8 @@ validSeriesdf.plot(alpha=0.6, x=dateformat, y='Validation', ax=ax)
 plt.ylabel(metric)
 plt.show()
 
-# Auto arima. we're using the demo that was in machinelearningmastery. might move this to the beginning or as its own thing
+# Auto arima. we're using the demo that was in machinelearningmastery. might move this to the beginning or as its own
+# thing
 
 model = pm.auto_arima(series[columnname], start_p=1, start_q=1,
                       test='adf',  # use adftest to find optimal 'd'
