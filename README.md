@@ -11,11 +11,11 @@ You can change the suggested ARIMA parameters based on what the ADF suggestion i
 
 The information you should modify is as follows. 
 ```
-client_name = 'sams'
+client_name = 'client'
 training_set = 'first_half.csv'
-confirmation_set = 'third_quarter.csv'
+confirmation_set = 'second_half.csv'
 metric = 'clicks'
-columnname = 'f0_'
+columnname = 'clicks'
 columntime = 'date'
 days_in_year=365
 dateformat = 'days'
