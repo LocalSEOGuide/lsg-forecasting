@@ -20,17 +20,54 @@ client_name = 'client'
 # training set: should have dates. should be in order
 training_set = 'first_half.csv'
 # set used for comparing to the model.
-confirmation_set = 'third_quarter.csv'
+confirmation_set = 'second_half.csv'
 # name of metric that will be predicted
 metric = 'clicks'
 # column of metric that will be predicted
-columnname = 'f0_'
+columnname = 'clicks'
 # name of column that includes date/time information (note: index should be zero. if index for date/time is not zero,
 # you may need to make fixes below)
 columntime = 'date'
 days_in_year = 365
 # days, months or years
 dateformat = 'days'
+
+
+# read the training set into series data with dates as index
+series = pd.read_csv(training_set, index_col=0, usecols=[columntime, columnname])
+print(series.head())
+# convert the
+series.index = pd.to_datetime(series.index)
+
+print(series.head(10))
+# line plot of dataset
+series.plot()
+plt.ylabel(metric)
+plt.show()
+
+
+
+# Auto arima. we're using the demo that was in machinelearningmastery. might move this to the beginning or as its own
+# thing
+
+model = pm.auto_arima(series[columnname], start_p=1, start_q=1,
+                      test='adf',  # use adftest to find optimal 'd'
+                      max_p=3, max_q=3,  # maximum p and q
+                      m=1,  # frequency of series
+                      d=None,  # let model determine 'd'
+                      seasonal=False,  # No Seasonality
+                      start_P=0,
+                      D=0,
+                      trace=True,
+                      error_action='ignore',
+                      suppress_warnings=True,
+                      stepwise=True)
+
+print(model.summary())
+
+model.plot_diagnostics(figsize=(7, 5))
+plt.show()
+
 
 
 # create a differenced series
@@ -47,17 +84,6 @@ def inverse_difference(history, yhat, interval=1):
     return yhat + history[-interval]
 
 
-# read the training set into series data with dates as index
-series = pd.read_csv(training_set, index_col=0, usecols=[columntime, columnname])
-print(series.head())
-# convert the
-series.index = pd.to_datetime(series.index)
-
-print(series.head(10))
-# line plot of dataset
-series.plot()
-plt.ylabel(metric)
-plt.show()
 
 # plot out the second half/validation dataset using the same set up
 validation = pd.read_csv(confirmation_set, index_col=0, usecols=[columntime, columnname])
@@ -167,25 +193,4 @@ print(histdf)
 ax = histdf.plot(alpha=0.6, x=dateformat, y="Forecast", label="forecast", color="r")
 validSeriesdf.plot(alpha=0.6, x=dateformat, y='Validation', ax=ax)
 plt.ylabel(metric)
-plt.show()
-
-# Auto arima. we're using the demo that was in machinelearningmastery. might move this to the beginning or as its own
-# thing
-
-model = pm.auto_arima(series[columnname], start_p=1, start_q=1,
-                      test='adf',  # use adftest to find optimal 'd'
-                      max_p=3, max_q=3,  # maximum p and q
-                      m=1,  # frequency of series
-                      d=None,  # let model determine 'd'
-                      seasonal=False,  # No Seasonality
-                      start_P=0,
-                      D=0,
-                      trace=True,
-                      error_action='ignore',
-                      suppress_warnings=True,
-                      stepwise=True)
-
-print(model.summary())
-
-model.plot_diagnostics(figsize=(7, 5))
 plt.show()
